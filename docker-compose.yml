@@ -1,0 +1,44 @@
+version: "3"
+
+networks:
+  default-network:
+    external:
+      name: lnmp_default-network
+
+services: 
+  db: 
+    image: mysql:${MYSQL_VERSION}
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+    networks:
+      default-network:
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+  
+  php-fpm:
+    image: "bitnami/php-fpm:${PHP_VERSION}"
+    expose:
+      - "9000"
+    networks:
+      default-network:
+    volumes:
+      - ./nginx/html:/app
+
+  nginx:
+    image: nginx:latest
+    ports: 
+      - "80:80"
+    networks:
+      default-network:
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl_certs:/etc/nginx/ssl_certs
+      - ./nginx/html:/usr/share/nginx/html
+
+
+
+
+
+
