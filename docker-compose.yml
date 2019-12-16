@@ -3,10 +3,11 @@ version: "3"
 networks:
   default-network:
     external:
-      name: lnmp_default-network
+      name: ${PROJECT_NAME}-network
 
 services: 
   db: 
+    container_name: ${PROJECT_NAME}-database
     image: mysql:${MYSQL_VERSION}
     expose:
       - "3306"
@@ -18,6 +19,7 @@ services:
       - ./mysql/conf.d:/etc/mysql/conf.d
   
   php-fpm:
+    container_name: ${PROJECT_NAME}-php
     image: "bitnami/php-fpm:${PHP_VERSION}"
     expose:
       - "9000"
@@ -27,9 +29,12 @@ services:
       - ./nginx/html:/app
 
   nginx:
+    container_name: ${PROJECT_NAME}-nginx
     image: nginx:latest
     ports: 
       - "80:80"
+    expose:
+      - "80"
     networks:
       default-network:
     volumes:
